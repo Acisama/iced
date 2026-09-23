@@ -1,207 +1,82 @@
 [package]
 name = "iced"
-description = "A cross-platform GUI library inspired by Elm"
 version.workspace = true
-edition.workspace = true
 authors.workspace = true
-license.workspace = true
-repository.workspace = true
-homepage.workspace = true
-categories.workspace = true
-keywords.workspace = true
+edition.workspace = true
 rust-version.workspace = true
-
-[lints]
-workspace = true
+description = "A cross-platform GUI library inspired by Elm"
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [package.metadata.docs.rs]
 rustdoc-args = ["--cfg", "docsrs"]
 all-features = true
 
-[badges]
-maintenance = { status = "actively-developed" }
-
-[features]
-default = ["wgpu", "tiny-skia", "crisp", "web-colors", "thread-pool", "linux-theme-detection", "x11", "wayland"]
-# Enables the `wgpu` GPU-accelerated renderer with all its default features (Vulkan, Metal, DX12, OpenGL, and WebGPU)
-wgpu = ["wgpu-bare", "iced_renderer/wgpu"]
-# Enables the `wgpu` GPU-accelerated renderer with the minimum required features (no backends!)
-wgpu-bare = ["iced_renderer/wgpu-bare", "iced_widget/wgpu"]
-# Enables the `tiny-skia` software renderer
-tiny-skia = ["iced_renderer/tiny-skia"]
-# Enables the `image` widget and image clipboard support
-image = ["image-without-codecs", "image/default"]
-# Enables the `image` widget, without any built-in codecs of the `image` crate
-image-without-codecs = ["iced_widget/image", "iced_winit/image", "dep:image"]
-# Enables the `svg` widget
-svg = ["iced_widget/svg"]
-# Enables the `canvas` widget
-canvas = ["iced_widget/canvas"]
-# Enables the `qr_code` widget
-qr_code = ["iced_widget/qr_code"]
-# Enables the `markdown` widget
-markdown = ["iced_widget/markdown"]
-# Enables debug metrics in native platforms (press F12)
-debug = ["iced_winit/debug", "dep:iced_devtools"]
-# Enables time-travel debugging (very experimental!)
-time-travel = ["debug", "iced_devtools/time-travel"]
-# Enables hot reloading (very experimental!)
-hot = ["debug", "iced_debug/hot"]
-# Enables the tester developer tool for recording and playing tests (press F12)
-tester = ["dep:iced_tester"]
-# Enables the `thread-pool` futures executor as the `executor::Default` on native platforms
-thread-pool = ["iced_futures/thread-pool"]
-# Enables `tokio` as the `executor::Default` on native platforms
-tokio = ["iced_futures/tokio"]
-# Enables `smol` as the `executor::Default` on native platforms
-smol = ["iced_futures/smol"]
-# Enables querying system information
-sysinfo = ["iced_winit/sysinfo"]
-# Enables broken "sRGB linear" blending to reproduce color management of the Web
-web-colors = ["iced_renderer/web-colors"]
-# Enables pixel snapping for crisp edges by default (can cause jitter!)
-crisp = ["iced_core/crisp"]
-# Enables the WebGL backend
-webgl = ["iced_renderer/webgl"]
-# Enables syntax highlighting
-highlighter = ["iced_highlighter", "iced_widget/highlighter"]
-# Enables the `widget::selector` module
-selector = ["iced_runtime/selector"]
-# Enables the advanced module
-advanced = ["iced_core/advanced", "iced_widget/advanced"]
-# Embeds Fira Sans into the final application; useful for testing and Wasm builds
-fira-sans = ["iced_renderer/fira-sans"]
-# Enables basic text shaping by default
-basic-shaping = ["iced_core/basic-shaping"]
-# Enables advanced text shaping by default
-advanced-shaping = ["iced_core/advanced-shaping"]
-# Enables strict assertions for debugging purposes at the expense of performance
-strict-assertions = ["iced_renderer/strict-assertions"]
-# Redraws on every runtime event, and not only when a widget requests it
-unconditional-rendering = ["iced_winit/unconditional-rendering"]
-# Enables support for the `sipper` library
-sipper = ["iced_runtime/sipper"]
-# Enables Linux system theme detection
-linux-theme-detection = ["iced_winit/linux-theme-detection"]
-# Enables the Unix X11 backend
-x11 = ["iced_renderer/x11", "iced_winit/x11"]
-# Enables the Unix Wayland backend
-wayland = ["iced_renderer/wayland", "iced_winit/wayland"]
-
-[dependencies]
-iced_debug.workspace = true
-iced_core.workspace = true
-iced_futures.workspace = true
-iced_renderer.workspace = true
-iced_runtime.workspace = true
-iced_widget.workspace = true
-iced_winit.workspace = true
-
-iced_devtools.workspace = true
-iced_devtools.optional = true
-
-iced_tester.workspace = true
-iced_tester.optional = true
-
-iced_highlighter.workspace = true
-iced_highlighter.optional = true
-
-thiserror.workspace = true
-
-image.workspace = true
-image.optional = true
-
-[dev-dependencies]
-criterion = "0.5"
-iced_test.workspace = true
-iced_wgpu.workspace = true
-iced_renderer.workspace = true
-
-iced.workspace = true
-iced.features = ["advanced"]
-
-[[bench]]
-name = "wgpu"
-harness = false
-required-features = ["canvas"]
-
-[[bench]]
-name = "cpu"
-harness = false
-required-features = ["canvas"]
-
-[profile.release-opt]
-inherits = "release"
-codegen-units = 1
-debug = false
-lto = true
-incremental = false
-opt-level = 3
-overflow-checks = false
-strip = "debuginfo"
-
 [workspace]
 members = [
-    "beacon",
-    "core",
-    "debug",
-    "devtools",
-    "futures",
-    "graphics",
-    "highlighter",
-    "program",
-    "renderer",
-    "runtime",
-    "selector",
-    "test",
-    "tester",
-    "tiny_skia",
-    "wgpu",
-    "widget",
-    "winit",
-    "examples/*",
+  "beacon",
+  "core",
+  "debug",
+  "devtools",
+  "examples/*",
+  "futures",
+  "graphics",
+  "highlighter",
+  "program",
+  "renderer",
+  "runtime",
+  "selector",
+  "test",
+  "tester",
+  "tiny_skia",
+  "wgpu",
+  "widget",
+  "winit",
 ]
 
 [workspace.package]
 version = "0.15.0-dev"
 authors = ["Héctor Ramón Jiménez <hector@hecrj.dev>"]
 edition = "2024"
-license = "MIT"
-repository = "https://github.com/iced-rs/iced"
-homepage = "https://iced.rs"
-categories = ["gui"]
-keywords = ["gui", "ui", "graphics", "interface", "widgets"]
 rust-version = "1.93"
+homepage = "https://iced.rs"
+repository = "https://github.com/iced-rs/iced"
+license = "MIT"
+keywords = ["graphics", "gui", "interface", "ui", "widgets"]
+categories = ["gui"]
 
 [workspace.dependencies]
-iced = { version = "0.15.0-dev", path = "." }
-iced_beacon = { version = "0.15.0-dev", path = "beacon" }
-iced_core = { version = "0.15.0-dev", path = "core" }
-iced_debug = { version = "0.15.0-dev", path = "debug" }
-iced_devtools = { version = "0.15.0-dev", path = "devtools" }
-iced_futures = { version = "0.15.0-dev", path = "futures" }
-iced_graphics = { version = "0.15.0-dev", path = "graphics" }
-iced_highlighter = { version = "0.15.0-dev", path = "highlighter" }
-iced_program = { version = "0.15.0-dev", path = "program" }
-iced_renderer = { version = "0.15.0-dev", path = "renderer" }
-iced_runtime = { version = "0.15.0-dev", path = "runtime" }
-iced_selector = { version = "0.15.0-dev", path = "selector" }
-iced_test = { version = "0.15.0-dev", path = "test" }
-iced_tester = { version = "0.15.0-dev", path = "tester" }
-iced_tiny_skia = { version = "0.15.0-dev", path = "tiny_skia", default-features = false }
-iced_wgpu = { version = "0.15.0-dev", path = "wgpu", default-features = false }
-iced_widget = { version = "0.15.0-dev", path = "widget" }
-iced_winit = { version = "0.15.0-dev", path = "winit", default-features = false }
+iced = { path = ".", version = "0.15.0-dev" }
+iced_beacon = { path = "beacon", version = "0.15.0-dev" }
+iced_core = { path = "core", version = "0.15.0-dev" }
+iced_debug = { path = "debug", version = "0.15.0-dev" }
+iced_devtools = { path = "devtools", version = "0.15.0-dev" }
+iced_futures = { path = "futures", version = "0.15.0-dev" }
+iced_graphics = { path = "graphics", version = "0.15.0-dev" }
+iced_highlighter = { path = "highlighter", version = "0.15.0-dev" }
+iced_program = { path = "program", version = "0.15.0-dev" }
+iced_renderer = { path = "renderer", version = "0.15.0-dev" }
+iced_runtime = { path = "runtime", version = "0.15.0-dev" }
+iced_selector = { path = "selector", version = "0.15.0-dev" }
+iced_test = { path = "test", version = "0.15.0-dev" }
+iced_tester = { path = "tester", version = "0.15.0-dev" }
+iced_tiny_skia = { path = "tiny_skia", version = "0.15.0-dev", default-features = false }
+iced_wgpu = { path = "wgpu", version = "0.15.0-dev", default-features = false }
+iced_widget = { path = "widget", version = "0.15.0-dev" }
+iced_winit = { path = "winit", version = "0.15.0-dev", default-features = false }
 
 arboard = { version = "3.6", default-features = false }
 bincode = "1.3"
 bitflags = "2.0"
 bytemuck = { version = "1.0", features = ["derive"] }
 bytes = "1.6"
-cargo-hot = { version = "0.1", package = "cargo-hot-protocol" }
+cargo-hot = { package = "cargo-hot-protocol", version = "0.1" }
 cosmic-text = { git = "https://github.com/hecrj/cosmic-text.git", rev = "1cdc3e0fcda67e38946db57df777181e4569d7c0" }
 cryoglyph = { git = "https://github.com/iced-rs/cryoglyph.git", rev = "b4576782d7c22ecef973d32cf5b18881ad14fe89" }
-futures = { version = "0.3", default-features = false, features = ["std", "async-await"] }
+futures = { version = "0.3", default-features = false, features = ["async-await", "std"] }
 glam = "0.33.2"
 guillotiere = "0.6"
 half = "2.2"
@@ -231,7 +106,7 @@ smol_str = "0.2"
 softbuffer = { version = "0.4", default-features = false }
 sysinfo = "0.33"
 thiserror = "2"
-tiny-skia = { version = "0.11", default-features = false, features = ["std", "simd"] }
+tiny-skia = { version = "0.11", default-features = false, features = ["simd", "std"] }
 tokio = "1.0"
 tracing = "0.1"
 two-face = { version = "0.5", default-features = false, features = ["syntect-fancy"] }
@@ -239,35 +114,160 @@ unicode-segmentation = "1.0"
 url = "2.5"
 wasm-bindgen-futures = "0.4"
 wasmtimer = "0.4.2"
-web-sys = "=0.3.85"
+web-sys = "0.3.105"
 web-time = "1.1"
 wgpu = { version = "29", default-features = false, features = ["std", "wgsl"] }
 winit = { git = "https://github.com/iced-rs/winit.git", rev = "05b8ff17a06562f0a10bb46e6eaacbe2a95cb5ed", default-features = false, features = ["rwh_06"] }
 
+[workspace.lints.clippy]
+default_trait_access = "deny"
+filter_map_next = "deny"
+from_over_into = "deny"
+large-enum-variant = "allow"
+manual_filter = "allow"
+manual_let_else = "deny"
+map-entry = "allow"
+match-wildcard-for-single-variants = "deny"
+needless_borrow = "deny"
+new_without_default = "deny"
+redundant-closure-for-method-calls = "deny"
+result_large_err = "allow"
+semicolon_if_nothing_returned = "deny"
+trivially-copy-pass-by-ref = "deny"
+type-complexity = "allow"
+unused_async = "deny"
+useless_conversion = "deny"
+
 [workspace.lints.rust]
-rust_2018_idioms = { level = "deny", priority = -1 }
 missing_docs = "deny"
+rust_2018_idioms = { level = "deny", priority = -1 }
 unsafe_code = "deny"
 unused_results = "deny"
 
-[workspace.lints.clippy]
-type-complexity = "allow"
-map-entry = "allow"
-large-enum-variant = "allow"
-result_large_err = "allow"
-manual_filter = "allow"
-semicolon_if_nothing_returned = "deny"
-trivially-copy-pass-by-ref = "deny"
-default_trait_access = "deny"
-match-wildcard-for-single-variants = "deny"
-redundant-closure-for-method-calls = "deny"
-filter_map_next = "deny"
-manual_let_else = "deny"
-unused_async = "deny"
-from_over_into = "deny"
-needless_borrow = "deny"
-new_without_default = "deny"
-useless_conversion = "deny"
-
 [workspace.lints.rustdoc]
 broken_intra_doc_links = "forbid"
+
+[[bench]]
+harness = false
+name = "wgpu"
+required-features = ["canvas"]
+
+[[bench]]
+harness = false
+name = "cpu"
+required-features = ["canvas"]
+
+[dependencies]
+iced_core.workspace = true
+iced_debug.workspace = true
+iced_futures.workspace = true
+iced_renderer.workspace = true
+iced_runtime.workspace = true
+iced_widget.workspace = true
+iced_winit.workspace = true
+
+iced_devtools.workspace = true
+iced_devtools.optional = true
+
+iced_tester.workspace = true
+iced_tester.optional = true
+
+iced_highlighter.workspace = true
+iced_highlighter.optional = true
+
+thiserror.workspace = true
+
+image.workspace = true
+image.optional = true
+
+[dev-dependencies]
+criterion = "0.5"
+iced_renderer.workspace = true
+iced_test.workspace = true
+iced_wgpu.workspace = true
+
+iced.workspace = true
+iced.features = ["advanced"]
+
+[badges]
+maintenance = { status = "actively-developed" }
+
+[features]
+default = ["crisp", "linux-theme-detection", "thread-pool", "tiny-skia", "wayland", "web-colors", "wgpu", "x11"]
+# Enables the advanced module
+advanced = ["iced_core/advanced", "iced_widget/advanced"]
+# Enables advanced text shaping by default
+advanced-shaping = ["iced_core/advanced-shaping"]
+# Enables basic text shaping by default
+basic-shaping = ["iced_core/basic-shaping"]
+# Enables the `canvas` widget
+canvas = ["iced_widget/canvas"]
+# Enables pixel snapping for crisp edges by default (can cause jitter!)
+crisp = ["iced_core/crisp"]
+# Enables debug metrics in native platforms (press F12)
+debug = ["dep:iced_devtools", "iced_winit/debug"]
+# Embeds Fira Sans into the final application; useful for testing and Wasm builds
+fira-sans = ["iced_renderer/fira-sans"]
+# Enables syntax highlighting
+highlighter = ["iced_highlighter", "iced_widget/highlighter"]
+# Enables hot reloading (very experimental!)
+hot = ["debug", "iced_debug/hot"]
+# Enables the `image` widget and image clipboard support
+image = ["image-without-codecs", "image/default"]
+# Enables the `image` widget, without any built-in codecs of the `image` crate
+image-without-codecs = ["dep:image", "iced_widget/image", "iced_winit/image"]
+# Enables Linux system theme detection
+linux-theme-detection = ["iced_winit/linux-theme-detection"]
+# Enables the `markdown` widget
+markdown = ["iced_widget/markdown"]
+# Enables the `qr_code` widget
+qr_code = ["iced_widget/qr_code"]
+# Enables the `widget::selector` module
+selector = ["iced_runtime/selector"]
+# Enables support for the `sipper` library
+sipper = ["iced_runtime/sipper"]
+# Enables `smol` as the `executor::Default` on native platforms
+smol = ["iced_futures/smol"]
+# Enables strict assertions for debugging purposes at the expense of performance
+strict-assertions = ["iced_renderer/strict-assertions"]
+# Enables the `svg` widget
+svg = ["iced_widget/svg"]
+# Enables querying system information
+sysinfo = ["iced_winit/sysinfo"]
+# Enables the tester developer tool for recording and playing tests (press F12)
+tester = ["dep:iced_tester"]
+# Enables the `thread-pool` futures executor as the `executor::Default` on native platforms
+thread-pool = ["iced_futures/thread-pool"]
+# Enables time-travel debugging (very experimental!)
+time-travel = ["debug", "iced_devtools/time-travel"]
+# Enables the `tiny-skia` software renderer
+tiny-skia = ["iced_renderer/tiny-skia"]
+# Enables `tokio` as the `executor::Default` on native platforms
+tokio = ["iced_futures/tokio"]
+# Redraws on every runtime event, and not only when a widget requests it
+unconditional-rendering = ["iced_winit/unconditional-rendering"]
+# Enables the Unix Wayland backend
+wayland = ["iced_renderer/wayland", "iced_winit/wayland"]
+# Enables broken "sRGB linear" blending to reproduce color management of the Web
+web-colors = ["iced_renderer/web-colors"]
+# Enables the WebGL backend
+webgl = ["iced_renderer/webgl"]
+# Enables the `wgpu` GPU-accelerated renderer with all its default features (Vulkan, Metal, DX12, OpenGL, and WebGPU)
+wgpu = ["iced_renderer/wgpu", "wgpu-bare"]
+# Enables the `wgpu` GPU-accelerated renderer with the minimum required features (no backends!)
+wgpu-bare = ["iced_renderer/wgpu-bare", "iced_widget/wgpu"]
+# Enables the Unix X11 backend
+x11 = ["iced_renderer/x11", "iced_winit/x11"]
+
+[lints]
+workspace = true
+
+[profile.release-opt]
+inherits = "release"
+opt-level = 3
+debug = false
+strip = "debuginfo"
+overflow-checks = false
+lto = true
+incremental = false
+codegen-units = 1
