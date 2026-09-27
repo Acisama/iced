@@ -85,12 +85,12 @@ where
         // for exactly one frame.
         tree::diff_children(
             &mut tree.children,
-            std::slice::from_mut(&mut current.element.as_widget_mut()),
+            std::slice::from_mut(&mut current.element),
         );
 
         // The widget value is recreated every frame, so the size hint must be
         // re-derived from the cached element on every diff
-        self.size = current.element.as_widget().size();
+        self.size = current.element.size();
     }
 
     fn size(&self) -> Size<Length> {
@@ -104,7 +104,6 @@ where
 
         cached
             .element
-            .as_widget_mut()
             .layout(&mut tree.children[0], renderer, limits);
 
         tree.size = tree.children[0].size;
@@ -122,13 +121,9 @@ where
             .state
             .downcast_mut::<Internal<Message, Theme, Renderer>>();
 
-        cached.element.as_widget_mut().operate(
-            &mut tree.children[0],
-            layout,
-            viewport,
-            renderer,
-            operation,
-        );
+        cached
+            .element
+            .operate(&mut tree.children[0], layout, viewport, renderer, operation);
     }
 
     fn update(
@@ -145,7 +140,7 @@ where
             .state
             .downcast_mut::<Internal<Message, Theme, Renderer>>();
 
-        cached.element.as_widget_mut().update(
+        cached.element.update(
             &mut tree.children[0],
             event,
             layout,
@@ -168,13 +163,9 @@ where
             .state
             .downcast_ref::<Internal<Message, Theme, Renderer>>();
 
-        cached.element.as_widget().mouse_interaction(
-            &tree.children[0],
-            layout,
-            cursor,
-            viewport,
-            renderer,
-        )
+        cached
+            .element
+            .mouse_interaction(&tree.children[0], layout, cursor, viewport, renderer)
     }
 
     fn draw(
@@ -191,7 +182,7 @@ where
             .state
             .downcast_ref::<Internal<Message, Theme, Renderer>>();
 
-        current.element.as_widget().draw(
+        current.element.draw(
             &tree.children[0],
             renderer,
             theme,
@@ -215,7 +206,7 @@ where
             .state
             .downcast_mut::<Internal<Message, Theme, Renderer>>();
 
-        current.element.as_widget_mut().overlay(
+        current.element.overlay(
             &mut tree.children[0],
             layout,
             renderer,
@@ -243,6 +234,6 @@ where
     Dependency: Hash + 'a,
 {
     fn from(lazy: Lazy<'a, Message, Theme, Renderer, Dependency, View>) -> Self {
-        Self::new(lazy)
+        lazy.boxed()
     }
 }
