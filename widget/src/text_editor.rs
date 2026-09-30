@@ -411,6 +411,7 @@ where
                 editor::Update::Action(action) => {
                     shell.capture_event();
                     shell.publish(on_edit(action));
+                    shell.capture_event();
                 }
                 editor::Update::Release => {}
                 editor::Update::Custom(message) => {
@@ -809,7 +810,7 @@ pub fn default(theme: &Theme, status: Status) -> Style {
         },
         placeholder: palette.secondary.base.color,
         value: palette.background.weakest.text,
-        selection: palette.primary.weak.color,
+        selection: palette.background.strongest.color,
     };
 
     match status {
