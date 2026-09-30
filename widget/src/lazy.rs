@@ -76,14 +76,21 @@ where
             current.element = (self.view)(&self.dependency).into();
         }
 
-        // The widget value is recreated every frame, so the size hint must be
-        // re-derived from the cached element on every diff
-        self.size = current.element.as_widget().size();
-
+        // `diff_children` must run before the size hint is read below: widgets
+        // like `Stack`/`Column` with `Length::Fit` only derive their real size
+        // from their children inside their own `diff` (not at construction), so
+        // reading `.size()` on a freshly rebuilt element beforehand would see
+        // its pre-diff placeholder size (e.g. `Fit` instead of the `Fill` its
+        // child actually has), starving siblings in the parent's flex layout
+        // for exactly one frame.
         tree::diff_children(
             &mut tree.children,
             std::slice::from_mut(&mut current.element.as_widget_mut()),
         );
+
+        // The widget value is recreated every frame, so the size hint must be
+        // re-derived from the cached element on every diff
+        self.size = current.element.as_widget().size();
     }
 
     fn size(&self) -> Size<Length> {

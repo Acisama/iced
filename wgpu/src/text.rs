@@ -4,7 +4,7 @@ use crate::core::{Rectangle, Size, Transformation, Vector};
 use crate::graphics::cache;
 use crate::graphics::color;
 use crate::graphics::text::cache::{self as text_cache, Cache as BufferCache};
-use crate::graphics::text::{Editor, Paragraph, font_system, to_color};
+use crate::graphics::text::{font_system, to_color, Editor, Paragraph};
 use crate::nudge;
 
 use rustc_hash::FxHashMap;
@@ -353,15 +353,22 @@ impl State {
                     );
 
                     match result {
-                        Ok(()) => {
-                            self.prepare_layer += 1;
-                        }
+                        Ok(()) => {}
                         Err(cryoglyph::PrepareError::AtlasFull) => {
                             // If the atlas cannot grow, then all bets are off.
                             // Instead of panicking, we will just pray that the result
                             // will be somewhat readable...
                         }
                     }
+
+                    // `render` walks the batch in this same order and advances one
+                    // renderer per `Group`, regardless of whether its `prepare` above
+                    // succeeded. Not advancing here on `AtlasFull` used to leave this
+                    // slot for the *next* `Group` to reuse (and overwrite) in `prepare`,
+                    // while `render` still paired each `Group` with its own slot by
+                    // position -- shifting every renderer after the failed one by one,
+                    // so unrelated text further down the batch rendered stale or wrong.
+                    self.prepare_layer += 1;
                 }
                 Item::Cached {
                     transformation,
