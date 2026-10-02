@@ -15,6 +15,132 @@ categories.workspace = true
 rustdoc-args = ["--cfg", "docsrs"]
 all-features = true
 
+[badges]
+maintenance = { status = "actively-developed" }
+
+[features]
+default = ["wgpu", "tiny-skia", "crisp", "web-colors", "thread-pool", "linux-theme-detection", "x11", "wayland", "wayland-dlopen", "wayland-decorations"]
+# Enables the `wgpu` GPU-accelerated renderer with all its default features (Vulkan, Metal, DX12, OpenGL, and WebGPU)
+wgpu = ["wgpu-bare", "iced_renderer/wgpu"]
+# Enables the `wgpu` GPU-accelerated renderer with the minimum required features (no backends!)
+wgpu-bare = ["iced_renderer/wgpu-bare", "iced_widget/wgpu"]
+# Enables the `tiny-skia` software renderer
+tiny-skia = ["iced_renderer/tiny-skia"]
+# Enables the `image` widget and image clipboard support
+image = ["image-without-codecs", "image/default"]
+# Enables the `image` widget, without any built-in codecs of the `image` crate
+image-without-codecs = ["iced_widget/image", "iced_winit/image", "dep:image"]
+# Enables the `svg` widget
+svg = ["iced_widget/svg"]
+# Enables the `canvas` widget
+canvas = ["iced_widget/canvas"]
+# Enables the `qr_code` widget
+qr_code = ["iced_widget/qr_code"]
+# Enables the `markdown` widget
+markdown = ["iced_widget/markdown"]
+# Enables debug metrics in native platforms (press F12)
+debug = ["iced_winit/debug", "dep:iced_devtools"]
+# Enables time-travel debugging (very experimental!)
+time-travel = ["debug", "iced_devtools/time-travel"]
+# Enables hot reloading (very experimental!)
+hot = ["debug", "iced_debug/hot"]
+# Enables the tester developer tool for recording and playing tests (press F12)
+tester = ["dep:iced_tester"]
+# Enables the `thread-pool` futures executor as the `executor::Default` on native platforms
+thread-pool = ["iced_futures/thread-pool"]
+# Enables `tokio` as the `executor::Default` on native platforms
+tokio = ["iced_futures/tokio"]
+# Enables `smol` as the `executor::Default` on native platforms
+smol = ["iced_futures/smol"]
+# Enables querying system information
+sysinfo = ["iced_winit/sysinfo"]
+# Enables broken "sRGB linear" blending to reproduce color management of the Web
+web-colors = ["iced_renderer/web-colors"]
+# Enables pixel snapping for crisp edges by default (can cause jitter!)
+crisp = ["iced_core/crisp"]
+# Enables the WebGL backend
+webgl = ["iced_renderer/webgl"]
+# Enables syntax highlighting
+highlighter = ["iced_highlighter", "iced_widget/highlighter"]
+# Enables the `widget::selector` module
+selector = ["iced_runtime/selector"]
+# Enables the advanced module
+advanced = ["iced_core/advanced", "iced_widget/advanced"]
+# Embeds Fira Sans into the final application; useful for testing and Wasm builds
+fira-sans = ["iced_renderer/fira-sans"]
+# Enables basic text shaping by default
+basic-shaping = ["iced_core/basic-shaping"]
+# Enables advanced text shaping by default
+advanced-shaping = ["iced_core/advanced-shaping"]
+# Enables strict assertions for debugging purposes at the expense of performance
+strict-assertions = ["iced_renderer/strict-assertions"]
+# Redraws on every runtime event, and not only when a widget requests it
+unconditional-rendering = ["iced_winit/unconditional-rendering"]
+# Enables support for the `sipper` library
+sipper = ["iced_runtime/sipper"]
+# Enables Linux system theme detection
+linux-theme-detection = ["iced_winit/linux-theme-detection"]
+# Enables the Unix X11 backend
+x11 = ["iced_renderer/x11", "iced_winit/x11"]
+# Enables the Unix Wayland backend
+wayland = ["iced_renderer/wayland", "iced_winit/wayland"]
+# Enables dynamic linking of Wayland libraries
+wayland-dlopen = ["iced_winit/wayland-dlopen"]
+# Enables client-side decorations in Wayland
+wayland-decorations = ["iced_winit/wayland-decorations"]
+
+[dependencies]
+iced_debug.workspace = true
+iced_core.workspace = true
+iced_futures.workspace = true
+iced_renderer.workspace = true
+iced_runtime.workspace = true
+iced_widget.workspace = true
+iced_winit.workspace = true
+
+iced_devtools.workspace = true
+iced_devtools.optional = true
+
+iced_tester.workspace = true
+iced_tester.optional = true
+
+iced_highlighter.workspace = true
+iced_highlighter.optional = true
+
+thiserror.workspace = true
+
+image.workspace = true
+image.optional = true
+
+[dev-dependencies]
+criterion = "0.5"
+iced_test.workspace = true
+iced_wgpu.workspace = true
+iced_renderer.workspace = true
+
+iced.workspace = true
+iced.features = ["advanced"]
+
+[[bench]]
+name = "wgpu"
+harness = false
+required-features = ["canvas"]
+
+[[bench]]
+name = "cpu"
+harness = false
+required-features = ["canvas"]
+
+[profile.release-opt]
+inherits = "release"
+codegen-units = 1
+debug = false
+lto = true
+incremental = false
+opt-level = 3
+overflow-checks = false
+strip = "debuginfo"
+
 [workspace]
 members = [
   "beacon",
@@ -146,128 +272,3 @@ unused_results = "deny"
 
 [workspace.lints.rustdoc]
 broken_intra_doc_links = "forbid"
-
-[[bench]]
-harness = false
-name = "wgpu"
-required-features = ["canvas"]
-
-[[bench]]
-harness = false
-name = "cpu"
-required-features = ["canvas"]
-
-[dependencies]
-iced_core.workspace = true
-iced_debug.workspace = true
-iced_futures.workspace = true
-iced_renderer.workspace = true
-iced_runtime.workspace = true
-iced_widget.workspace = true
-iced_winit.workspace = true
-
-iced_devtools.workspace = true
-iced_devtools.optional = true
-
-iced_tester.workspace = true
-iced_tester.optional = true
-
-iced_highlighter.workspace = true
-iced_highlighter.optional = true
-
-thiserror.workspace = true
-
-image.workspace = true
-image.optional = true
-
-[dev-dependencies]
-criterion = "0.5"
-iced_renderer.workspace = true
-iced_test.workspace = true
-iced_wgpu.workspace = true
-
-iced.workspace = true
-iced.features = ["advanced"]
-
-[badges]
-maintenance = { status = "actively-developed" }
-
-[features]
-default = ["crisp", "linux-theme-detection", "thread-pool", "tiny-skia", "wayland", "web-colors", "wgpu", "x11"]
-# Enables the advanced module
-advanced = ["iced_core/advanced", "iced_widget/advanced"]
-# Enables advanced text shaping by default
-advanced-shaping = ["iced_core/advanced-shaping"]
-# Enables basic text shaping by default
-basic-shaping = ["iced_core/basic-shaping"]
-# Enables the `canvas` widget
-canvas = ["iced_widget/canvas"]
-# Enables pixel snapping for crisp edges by default (can cause jitter!)
-crisp = ["iced_core/crisp"]
-# Enables debug metrics in native platforms (press F12)
-debug = ["dep:iced_devtools", "iced_winit/debug"]
-# Embeds Fira Sans into the final application; useful for testing and Wasm builds
-fira-sans = ["iced_renderer/fira-sans"]
-# Enables syntax highlighting
-highlighter = ["iced_highlighter", "iced_widget/highlighter"]
-# Enables hot reloading (very experimental!)
-hot = ["debug", "iced_debug/hot"]
-# Enables the `image` widget and image clipboard support
-image = ["image-without-codecs", "image/default"]
-# Enables the `image` widget, without any built-in codecs of the `image` crate
-image-without-codecs = ["dep:image", "iced_widget/image", "iced_winit/image"]
-# Enables Linux system theme detection
-linux-theme-detection = ["iced_winit/linux-theme-detection"]
-# Enables the `markdown` widget
-markdown = ["iced_widget/markdown"]
-# Enables the `qr_code` widget
-qr_code = ["iced_widget/qr_code"]
-# Enables the `widget::selector` module
-selector = ["iced_runtime/selector"]
-# Enables support for the `sipper` library
-sipper = ["iced_runtime/sipper"]
-# Enables `smol` as the `executor::Default` on native platforms
-smol = ["iced_futures/smol"]
-# Enables strict assertions for debugging purposes at the expense of performance
-strict-assertions = ["iced_renderer/strict-assertions"]
-# Enables the `svg` widget
-svg = ["iced_widget/svg"]
-# Enables querying system information
-sysinfo = ["iced_winit/sysinfo"]
-# Enables the tester developer tool for recording and playing tests (press F12)
-tester = ["dep:iced_tester"]
-# Enables the `thread-pool` futures executor as the `executor::Default` on native platforms
-thread-pool = ["iced_futures/thread-pool"]
-# Enables time-travel debugging (very experimental!)
-time-travel = ["debug", "iced_devtools/time-travel"]
-# Enables the `tiny-skia` software renderer
-tiny-skia = ["iced_renderer/tiny-skia"]
-# Enables `tokio` as the `executor::Default` on native platforms
-tokio = ["iced_futures/tokio"]
-# Redraws on every runtime event, and not only when a widget requests it
-unconditional-rendering = ["iced_winit/unconditional-rendering"]
-# Enables the Unix Wayland backend
-wayland = ["iced_renderer/wayland", "iced_winit/wayland"]
-# Enables broken "sRGB linear" blending to reproduce color management of the Web
-web-colors = ["iced_renderer/web-colors"]
-# Enables the WebGL backend
-webgl = ["iced_renderer/webgl"]
-# Enables the `wgpu` GPU-accelerated renderer with all its default features (Vulkan, Metal, DX12, OpenGL, and WebGPU)
-wgpu = ["iced_renderer/wgpu", "wgpu-bare"]
-# Enables the `wgpu` GPU-accelerated renderer with the minimum required features (no backends!)
-wgpu-bare = ["iced_renderer/wgpu-bare", "iced_widget/wgpu"]
-# Enables the Unix X11 backend
-x11 = ["iced_renderer/x11", "iced_winit/x11"]
-
-[lints]
-workspace = true
-
-[profile.release-opt]
-inherits = "release"
-opt-level = 3
-debug = false
-strip = "debuginfo"
-overflow-checks = false
-lto = true
-incremental = false
-codegen-units = 1
