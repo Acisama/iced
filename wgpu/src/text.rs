@@ -4,7 +4,7 @@ use crate::core::{Rectangle, Size, Transformation, Vector};
 use crate::graphics::cache;
 use crate::graphics::color;
 use crate::graphics::text::cache::{self as text_cache, Cache as BufferCache};
-use crate::graphics::text::{font_system, to_color, Editor, Paragraph};
+use crate::graphics::text::{Editor, Paragraph, font_system, to_color};
 use crate::nudge;
 
 use rustc_hash::FxHashMap;
