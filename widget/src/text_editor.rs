@@ -417,6 +417,7 @@ where
                 editor::Update::Custom(message) => {
                     shell.capture_event();
                     shell.publish(message);
+                    shell.capture_event();
                 }
                 editor::Update::Sequence(updates) => {
                     for update in updates {
@@ -426,10 +427,12 @@ where
                 editor::Update::Copy(content) => {
                     shell.capture_event();
                     shell.write_clipboard(clipboard::Content::Text(content));
+                    shell.capture_event();
                 }
                 editor::Update::Paste => {
                     shell.capture_event();
                     shell.read_clipboard(clipboard::Kind::Text);
+                    shell.capture_event();
                 }
                 editor::Update::RedrawAt(at) => {
                     shell.request_redraw_at(at);
