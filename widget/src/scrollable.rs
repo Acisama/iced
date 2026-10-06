@@ -2997,7 +2997,16 @@ impl State {
 
                 let delta = direction.align(delta);
 
-                if smooth_scroll && is_lines {
+                // High-resolution wheels report a single physical notch as a
+                // `Lines` event followed by one or more fractional `Pixels`
+                // correction ticks. Treat those trailing ticks as part of the
+                // same wheel gesture and accumulate them onto the in-flight
+                // animation, rather than letting `scroll`'s unconditional
+                // `cancel()` wipe out the jump the `Lines` event just started.
+                let continues_wheel_animation =
+                    self.target.is_some() && self.source == Some(Source::Wheel);
+
+                if smooth_scroll && (is_lines || continues_wheel_animation) {
                     self.scroll_smoothly(delta, bounds, content, Instant::now());
                 } else {
                     self.scroll(delta, bounds, content);
