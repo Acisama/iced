@@ -23,6 +23,15 @@ pub trait Scrollable {
         content: Size,
     );
 
+    /// Scroll the widget to the given [`AbsoluteOffset`] along the horizontal & vertical axis.
+    fn scroll_to_reveal(
+        &mut self,
+        offset: Rectangle,
+        animation: Animation,
+        bounds: Rectangle,
+        content: Size,
+    );
+
     /// Scroll the widget by the given [`AbsoluteOffset`] along the horizontal & vertical axis.
     fn scroll_by(
         &mut self,
@@ -100,6 +109,45 @@ pub fn scroll_to<T>(
         ) {
             if Some(&self.target) == id {
                 state.scroll_to(self.offset, self.animation, bounds, content);
+            }
+        }
+    }
+
+    ScrollTo {
+        target,
+        offset,
+        animation,
+    }
+}
+
+/// Produces an [`Operation`] that scrolls the widget with the given [`Id`] just enough to
+/// the provided [`AbsoluteOffset`].
+pub fn scroll_to_reveal<T>(
+    target: Id,
+    offset: Rectangle,
+    animation: Animation,
+) -> impl Operation<T> {
+    struct ScrollTo {
+        target: Id,
+        offset: Rectangle,
+        animation: Animation,
+    }
+
+    impl<T> Operation<T> for ScrollTo {
+        fn traverse(&mut self, operate: &mut dyn FnMut(&mut dyn Operation<T>)) {
+            operate(self);
+        }
+
+        fn scrollable(
+            &mut self,
+            id: Option<&Id>,
+            bounds: Rectangle,
+            content: Size,
+            _translation: Vector,
+            state: &mut dyn Scrollable,
+        ) {
+            if Some(&self.target) == id {
+                state.scroll_to_reveal(self.offset, self.animation, bounds, content);
             }
         }
     }

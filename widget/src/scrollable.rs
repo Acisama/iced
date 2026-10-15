@@ -1451,6 +1451,16 @@ impl operation::Scrollable for State {
         State::scroll_to(self, offset, animation, bounds, content, Source::Operation);
     }
 
+    fn scroll_to_reveal(
+        &mut self,
+        offset: Rectangle,
+        animation: Animation,
+        bounds: Rectangle,
+        content: Size,
+    ) {
+        State::scroll_to_reveal(self, offset, animation, bounds, content, Source::Operation);
+    }
+
     fn scroll_by(
         &mut self,
         offset: AbsoluteOffset,
@@ -2569,6 +2579,65 @@ impl State {
             .y
             .map(|y| Offset::Absolute(Self::clamp_offset(y, bounds.height, content.height)))
             .unwrap_or(self.offset_y);
+
+        self.scroll_smoothly_to(
+            Target::new(x, y, bounds, content),
+            bounds,
+            content,
+            Instant::now(),
+        );
+    }
+
+    /// Scrolls just enough to reveal the given [`Rectangle`], with the given [`Animation`].
+    fn scroll_to_reveal(
+        &mut self,
+        target: Rectangle,
+        animation: Animation,
+        bounds: Rectangle,
+        content: Size,
+        source: Source,
+    ) {
+        self.source = Some(source);
+
+        let current_x = self.offset_x.absolute(bounds.width, content.width);
+        let current_y = self.offset_y.absolute(bounds.height, content.height);
+
+        let view_left = current_x;
+        let view_right = current_x + bounds.width;
+        let target_left = target.x;
+        let target_right = target.x + target.width;
+
+        let final_x = if target_left >= view_left && target_right <= view_right {
+            current_x
+        } else if target_left < view_left {
+            target_left
+        } else {
+            target_right - bounds.width
+        };
+
+        let x = Offset::Absolute(Self::clamp_offset(final_x, bounds.width, content.width));
+
+        let view_top = current_y;
+        let view_bottom = current_y + bounds.height;
+        let target_top = target.y;
+        let target_bottom = target.y + target.height;
+
+        let final_y = if target_top >= view_top && target_bottom <= view_bottom {
+            current_y
+        } else if target_top < view_top {
+            target_top
+        } else {
+            target_bottom - bounds.height
+        };
+
+        let y = Offset::Absolute(Self::clamp_offset(final_y, bounds.height, content.height));
+
+        if !self.should_scroll_smoothly(animation) {
+            self.cancel();
+            self.offset_x = x;
+            self.offset_y = y;
+            return;
+        }
 
         self.scroll_smoothly_to(
             Target::new(x, y, bounds, content),

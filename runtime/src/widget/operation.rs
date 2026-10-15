@@ -1,4 +1,6 @@
 //! Change internal widget state.
+use iced_core::Rectangle;
+
 use crate::core::text;
 use crate::core::widget::Id;
 use crate::core::widget::operation;
@@ -37,6 +39,19 @@ pub fn scroll_to<T>(
     animation: Animation,
 ) -> Task<T> {
     task::effect(Action::widget(operation::scrollable::scroll_to(
+        id.into(),
+        offset.into(),
+        animation,
+    )))
+}
+
+/// Scrolls the scrollable with the given [`Id`] to the provided [`AbsoluteOffset`].
+pub fn scroll_to_reveal<T>(
+    id: impl Into<Id>,
+    offset: impl Into<Rectangle>,
+    animation: Animation,
+) -> Task<T> {
+    task::effect(Action::widget(operation::scrollable::scroll_to_reveal(
         id.into(),
         offset.into(),
         animation,
