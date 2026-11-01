@@ -404,7 +404,7 @@ fn smooth_scroll_reversal_carries_momentum() {
 }
 
 #[test]
-fn high_precision_scrolling_cancels_smooth_scroll() {
+fn high_precision_scrolling_continues_smooth_scroll() {
     let mut simulator = simulate(element(3000, 200));
     simulator.point_at(Point::new(500.0, 100.0));
 
@@ -419,12 +419,14 @@ fn high_precision_scrolling_cancels_smooth_scroll() {
         let _ = simulator.simulate([Event::Window(window::Event::RedrawRequested(instant))]);
     }
 
-    // ...and then a high-precision scroll arrives: it must be applied
-    // immediately, and cancel the pending smooth scroll
+    // ...and then a high-precision correction tick arrives, as high-resolution
+    // wheels report trailing fractional `Pixels` after the initial `Lines`
+    // notch: it must accumulate onto the in-flight animation instead of
+    // cancelling it
     let _ = simulator.scroll(ScrollDelta::Pixels { x: 0.0, y: -10.0 });
 
-    // Settle for a while longer
-    for _ in 0..30 {
+    // Settle the animation, frame by frame
+    for _ in 0..60 {
         instant += FRAME;
 
         let _ = simulator.simulate([Event::Window(window::Event::RedrawRequested(instant))]);
@@ -435,17 +437,30 @@ fn high_precision_scrolling_cancels_smooth_scroll() {
         .map(|scroll| (scroll.viewport.absolute_offset().y, scroll.target.is_some()))
         .unzip();
 
-    // Exactly four notifications: the wheel event (at the original
-    // position), the two frames of the smooth scroll, and the immediate
-    // high-precision scroll — and nothing after that
-    assert_eq!(offsets.len(), 4, "unexpected notifications: {offsets:?}");
+    // The offset must approach the target monotonically
+    let mut previous = 0.0;
 
-    // The high-precision scroll moved the offset by exactly its delta
-    assert!((offsets[3] - (offsets[2] + 10.0)).abs() < 1e-3);
+    for offset in &offsets {
+        assert!(
+            *offset >= previous,
+            "offset must not scroll backwards: {offsets:?}"
+        );
 
-    // The notifications report the smooth scroll as in progress until the
-    // high-precision scroll cancels it
-    assert_eq!(&animating[..], &[true, true, true, false]);
+        previous = *offset;
+    }
+
+    // The full distance of both the wheel notch and the correction tick was
+    // scrolled smoothly, settling exactly on their combined target
+    assert_eq!(offsets.last(), Some(&(px(1.0) + 10.0)));
+
+    // The animation is reported as in progress until it settles on the last
+    // notification
+    assert_eq!(animating.last(), Some(&false));
+    assert!(
+        animating[..animating.len() - 1]
+            .iter()
+            .all(|is_animating| *is_animating)
+    );
 }
 
 #[test]
