@@ -6126,7 +6126,7 @@ dependencies = [
  "bumpalo",
  "proc-macro2",
  "quote",
- "syn 3.0.4",
+ "syn 3.0.6",
  "wasm-bindgen-shared",
 ]
 
