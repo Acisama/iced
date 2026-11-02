@@ -473,6 +473,7 @@ where
 
     fn layout(&mut self, tree: &mut Tree, renderer: &Renderer, limits: &layout::Limits) {
         let Some(widget) = self else {
+            tree.size = Size::ZERO;
             return;
         };
 
